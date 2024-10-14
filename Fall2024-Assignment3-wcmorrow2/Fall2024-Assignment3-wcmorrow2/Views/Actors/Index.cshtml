@@ -1,7 +1,7 @@
-﻿@model IEnumerable<Fall2024_Assignment3_wcmorrow2.Models.Movie>
+﻿@model IEnumerable<Fall2024_Assignment3_wcmorrow2.Models.Actor>
 
 @{
-    ViewData["Title"] = "Movie Index";
+    ViewData["Title"] = "Actor Index";
 }
 
 <h1>Index</h1>
@@ -16,7 +16,10 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Year)
+                @Html.DisplayNameFor(model => model.DoB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DoD)
             </th>
             <th></th>
         </tr>
@@ -28,7 +31,10 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Year)
+                @Html.DisplayFor(modelItem => item.DoB)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DoD)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
