@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241014174259_initDB")]
-    partial class initDB
+    [Migration("20241015171025_inittables")]
+    partial class inittables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
