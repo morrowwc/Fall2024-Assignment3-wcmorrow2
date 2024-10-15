@@ -63,6 +63,19 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         {
             if (ModelState.IsValid)
             {
+                // Check if the MovieActor already exists
+                bool exists = _context.MovieActor
+                    .Any(ma => ma.MovieId == movieActor.MovieId && ma.ActorId == movieActor.ActorId);
+
+                if (exists)
+                {
+                    // Handle the case where the MovieActor already exists
+                    ModelState.AddModelError(string.Empty, "This actor is already associated with the selected movie.");
+                    ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
+                    ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+                    return View(movieActor);
+                }
+
                 _context.Add(movieActor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
