@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     /// <inheritdoc />
-    public partial class inittables : Migration
+    public partial class initDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,8 +18,11 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DoB = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DoD = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    DoD = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IMDBlink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,8 +74,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Year = table.Column<int>(type: "int", nullable: false)
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Year = table.Column<int>(type: "int", nullable: false),
+                    IMDBlink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },
                 constraints: table =>
                 {

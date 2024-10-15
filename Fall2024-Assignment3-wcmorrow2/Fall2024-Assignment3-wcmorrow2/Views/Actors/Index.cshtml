@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Actors</h1>
+<h1>Index</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -16,10 +16,16 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DoB)
+                @Html.DisplayNameFor(model => model.Gender)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.DoD)
+                Age
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IMDBlink)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Media)
             </th>
             <th></th>
         </tr>
@@ -31,10 +37,23 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DoB)
+                @Html.DisplayFor(modelItem => item.Gender)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.DoD)
+                @{
+                    var birthDate = item.DoB;
+                    var deathDate = item.DoD;
+                    var age = deathDate.HasValue
+                    ? deathDate.Value.Year - birthDate.Year - (deathDate.Value.DayOfYear < birthDate.DayOfYear ? 1 : 0)
+                    : DateTime.Now.Year - birthDate.Year - (DateTime.Now.DayOfYear < birthDate.DayOfYear ? 1 : 0);
+                }
+                @age
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IMDBlink)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Media)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

@@ -54,10 +54,19 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DoB,DoD")] Actor actor)
+        public async Task<IActionResult> Create([Bind("Id,Name,Gender,DoB,DoD,IMDBlink,MediaFile")] Actor actor)
         {
             if (ModelState.IsValid)
             {
+                if (actor.MediaFile != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await actor.MediaFile.CopyToAsync(memoryStream);
+                        actor.Media = memoryStream.ToArray();
+                    }
+                }
+
                 _context.Add(actor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +95,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DoB,DoD")] Actor actor)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,DoB,DoD,IMDBlink,MediaFile")] Actor actor)
         {
             if (id != actor.Id)
             {
@@ -97,7 +106,30 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 try
                 {
-                    _context.Update(actor);
+                    var existingActor = await _context.Actor.FindAsync(id);
+                    if (existingActor == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update existing properties
+                    existingActor.Name = actor.Name;
+                    existingActor.Gender = actor.Gender;
+                    existingActor.DoB = actor.DoB;
+                    existingActor.DoD = actor.DoD;
+                    existingActor.IMDBlink = actor.IMDBlink;
+
+                    // Update media if new file is uploaded
+                    if (actor.MediaFile != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await actor.MediaFile.CopyToAsync(memoryStream);
+                            existingActor.Media = memoryStream.ToArray();
+                        }
+                    }
+
+                    _context.Update(existingActor);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -115,6 +147,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
             return View(actor);
         }
+
 
         // GET: Actors/Delete/5
         public async Task<IActionResult> Delete(int? id)

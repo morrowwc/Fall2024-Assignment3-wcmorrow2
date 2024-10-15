@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
+using System.Numerics;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -54,10 +55,19 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Year")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,MediaFile")] Movie movie)
         {
             if (ModelState.IsValid)
             {
+                if (movie.MediaFile != null)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await movie.MediaFile.CopyToAsync(memoryStream);
+                        movie.Media = memoryStream.ToArray();
+                    }
+                }
+
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +96,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Year")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,MediaFile")] Movie movie)
         {
             if (id != movie.Id)
             {
@@ -97,7 +107,28 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 try
                 {
-                    _context.Update(movie);
+                    var existingMovie = await _context.Movie.FindAsync(id);
+                    if (existingMovie == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Update existing properties
+                    existingMovie.Title = movie.Title;
+                    existingMovie.Year = movie.Year;
+                    existingMovie.IMDBlink = movie.IMDBlink;
+
+                    // Update media if new file is uploaded
+                    if (movie.MediaFile != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await movie.MediaFile.CopyToAsync(memoryStream);
+                            existingMovie.Media = memoryStream.ToArray();
+                        }
+                    }
+
+                    _context.Update(existingMovie);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -115,6 +146,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
             return View(movie);
         }
+
 
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)

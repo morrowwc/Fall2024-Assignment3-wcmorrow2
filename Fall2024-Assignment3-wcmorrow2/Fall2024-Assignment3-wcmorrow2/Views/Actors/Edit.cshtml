@@ -19,6 +19,16 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <select asp-for="Gender" class="form-control">
+                    <option value="">Please select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="DoB" class="control-label"></label>
                 <input asp-for="DoB" class="form-control" />
                 <span asp-validation-for="DoB" class="text-danger"></span>
@@ -27,6 +37,16 @@
                 <label asp-for="DoD" class="control-label"></label>
                 <input asp-for="DoD" class="form-control" />
                 <span asp-validation-for="DoD" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IMDBlink" class="control-label"></label>
+                <input asp-for="IMDBlink" type="url" class="form-control" />
+                <span asp-validation-for="IMDBlink" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Media" class="control-label"></label>
+                <input asp-for="Media" type="file" class="form-control" />
+                <span asp-validation-for="Media" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
