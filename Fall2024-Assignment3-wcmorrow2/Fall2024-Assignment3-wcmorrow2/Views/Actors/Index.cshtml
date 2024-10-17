@@ -53,7 +53,14 @@
                 @Html.DisplayFor(modelItem => item.IMDBlink)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Media)
+                    @if (item.Media != null)
+                    {
+                        // Embed photo in page; good for security but bad for speed
+                        var base64 = Convert.ToBase64String(item.Media);
+                        var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
+                        <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
+
+                    }
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

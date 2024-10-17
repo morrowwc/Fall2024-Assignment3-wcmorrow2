@@ -49,8 +49,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // GET: MovieActors/Create
         public IActionResult Create()
         {
-            ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name");
-            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name");
+            ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name");
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name");
             return View();
         }
 
@@ -71,8 +71,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 {
                     // Handle the case where the MovieActor already exists
                     ModelState.AddModelError(string.Empty, "This actor is already associated with the selected movie.");
-                    ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-                    ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+                    ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
+                    ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
                     return View(movieActor);
                 }
 
@@ -80,8 +80,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
             return View(movieActor);
         }
 
@@ -98,8 +98,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 return NotFound();
             }
-            ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
             return View(movieActor);
         }
 
@@ -135,8 +135,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ActorId"] = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
             return View(movieActor);
         }
 

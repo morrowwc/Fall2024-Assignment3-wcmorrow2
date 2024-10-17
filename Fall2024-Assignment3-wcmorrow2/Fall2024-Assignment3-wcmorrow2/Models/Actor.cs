@@ -24,8 +24,6 @@ namespace Fall2024_Assignment3_wcmorrow2.Models
         public string IMDBlink { get; set; }
         [DisplayName("Photo / Media")]
         public byte[]? Media { get; set; }
-        [NotMapped]
-        public IFormFile? MediaFile { get; set; }
 
     }
 }

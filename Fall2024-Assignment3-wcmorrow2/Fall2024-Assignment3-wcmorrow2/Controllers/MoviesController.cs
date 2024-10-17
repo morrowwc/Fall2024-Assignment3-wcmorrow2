@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
-using System.Numerics;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -55,19 +54,17 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,MediaFile")] Movie movie)
+        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile Media)
         {
+           
             if (ModelState.IsValid)
             {
-                if (movie.MediaFile != null)
+                if (Media != null && Media.Length > 0)
                 {
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await movie.MediaFile.CopyToAsync(memoryStream);
-                        movie.Media = memoryStream.ToArray();
-                    }
+                    using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
+                    await Media.CopyToAsync(memoryStream);
+                    movie.Media = memoryStream.ToArray();
                 }
-
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -96,7 +93,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,MediaFile")] Movie movie)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile Media)
         {
             if (id != movie.Id)
             {
@@ -107,28 +104,13 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 try
                 {
-                    var existingMovie = await _context.Movie.FindAsync(id);
-                    if (existingMovie == null)
+                    if (Media != null && Media.Length > 0)
                     {
-                        return NotFound();
+                        using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
+                        await Media.CopyToAsync(memoryStream);
+                        movie.Media = memoryStream.ToArray();
                     }
-
-                    // Update existing properties
-                    existingMovie.Title = movie.Title;
-                    existingMovie.Year = movie.Year;
-                    existingMovie.IMDBlink = movie.IMDBlink;
-
-                    // Update media if new file is uploaded
-                    if (movie.MediaFile != null)
-                    {
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await movie.MediaFile.CopyToAsync(memoryStream);
-                            existingMovie.Media = memoryStream.ToArray();
-                        }
-                    }
-
-                    _context.Update(existingMovie);
+                    _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -146,7 +128,6 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
             return View(movie);
         }
-
 
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -184,6 +165,18 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         private bool MovieExists(int id)
         {
             return _context.Movie.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> GetMovieMedia(int id)
+        {
+            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            var imageData = movie.Media;
+
+            return File(imageData, "image/jpg");
         }
     }
 }
