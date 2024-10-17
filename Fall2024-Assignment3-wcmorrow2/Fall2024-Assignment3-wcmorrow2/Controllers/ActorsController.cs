@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
+using System.Diagnostics;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -34,14 +35,26 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
 
             var actor = await _context.Actor
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (actor == null)
             {
                 return NotFound();
             }
 
-            return View(actor);
+            var actorDetailsViewModel = new ActorDetailsViewModel
+            {
+                Value = actor,
+                Movies = _context.MovieActor
+                    .Where(ma => ma.ActorId == id)
+                    .Select(ma => ma.Movie)
+                    .ToList()
+            };
+
+            return View(actorDetailsViewModel);
         }
+
+
 
         // GET: Actors/Create
         public IActionResult Create()
@@ -56,22 +69,34 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Gender,DoB,DoD,IMDBlink,Media")] Actor actor, IFormFile Media)
         {
+            if (Media != null && Media.Length > 0)
+            {
+                using var memoryStream = new MemoryStream();
+                await Media.CopyToAsync(memoryStream);
+                actor.Media = memoryStream.ToArray();
+                memoryStream.Dispose();
 
+            }
+            else
+            {
+                // Load the default image from a file or an embedded resource
+                var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "profile.jpg");
+                actor.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+                Debug.WriteLine("Default image loaded");
+            }
+            
             if (ModelState.IsValid)
             {
-                if (Media != null && Media.Length > 0)
-                {
-                    using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
-                    await Media.CopyToAsync(memoryStream);
-                    actor.Media = memoryStream.ToArray();
-                }
+                
                 _context.Add(actor);
                 await _context.SaveChangesAsync();
+                Debug.WriteLine("Changes Saved");
                 return RedirectToAction(nameof(Index));
             }
+
             return View(actor);
         }
-
+        
         // GET: Actors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -109,6 +134,13 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                         using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
                         await Media.CopyToAsync(memoryStream);
                         actor.Media = memoryStream.ToArray();
+                        memoryStream.Dispose();
+                    }
+                    else
+                    {
+                        // Load the default image from a file or an embedded resource
+                        var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "profile.jpg");
+                        actor.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
                     }
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
@@ -170,6 +202,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         {
             var actor = await _context.Actor.FirstOrDefaultAsync(m => m.Id == id);
             if (actor == null)
+            {
+                return NotFound();
+            }
+            if (actor.Media == null)
             {
                 return NotFound();
             }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
+using System.Numerics;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -39,8 +40,16 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 return NotFound();
             }
+            var movieDetailsViewModel = new MovieDetailsViewModel
+            {
+                Value = movie,
+                Actors = _context.MovieActor
+                    .Where(ma => ma.MovieId == id)
+                    .Select(ma => ma.Actor)
+                    .ToList()
+            };
 
-            return View(movie);
+            return View(movieDetailsViewModel);
         }
 
         // GET: Movies/Create
@@ -171,6 +180,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         {
             var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)
+            {
+                return NotFound();
+            }
+            if (movie.Media == null)
             {
                 return NotFound();
             }

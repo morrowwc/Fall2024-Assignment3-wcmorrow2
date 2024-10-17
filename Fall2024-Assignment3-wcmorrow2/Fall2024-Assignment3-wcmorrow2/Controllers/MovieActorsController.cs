@@ -50,7 +50,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         public IActionResult Create()
         {
             ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name");
-            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name");
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Title");
             return View();
         }
 
@@ -72,7 +72,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                     // Handle the case where the MovieActor already exists
                     ModelState.AddModelError(string.Empty, "This actor is already associated with the selected movie.");
                     ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-                    ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+                    ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Title", movieActor.MovieId);
                     return View(movieActor);
                 }
 
@@ -81,7 +81,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Title", movieActor.MovieId);
             return View(movieActor);
         }
 
@@ -99,7 +99,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return NotFound();
             }
             ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Title", movieActor.MovieId);
             return View(movieActor);
         }
 
@@ -136,7 +136,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewBag.ActorId = new SelectList(_context.Actor, "Id", "Name", movieActor.ActorId);
-            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Name", movieActor.MovieId);
+            ViewBag.MovieId = new SelectList(_context.Movie, "Id", "Title", movieActor.MovieId);
             return View(movieActor);
         }
 

@@ -1,4 +1,4 @@
-﻿@model Fall2024_Assignment3_wcmorrow2.Models.Actor
+﻿@model Fall2024_Assignment3_wcmorrow2.Models.ActorDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,50 +11,61 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
+            @Html.DisplayNameFor(model => model.Value.Name)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
+            @Html.DisplayFor(model => model.Value.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
+            @Html.DisplayNameFor(model => model.Value.Gender)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
+            @Html.DisplayFor(model => model.Value.Gender)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DoB)
+            @Html.DisplayNameFor(model => model.Value.DoB)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DoB)
+            @Html.DisplayFor(model => model.Value.DoB)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DoD)
+            @Html.DisplayNameFor(model => model.Value.DoD)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DoD)
+            @Html.DisplayFor(model => model.Value.DoD)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IMDBlink)
+            @Html.DisplayNameFor(model => model.Value.IMDBlink)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IMDBlink)
+            @Html.DisplayFor(model => model.Value.IMDBlink)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Media)
+            @Html.DisplayNameFor(model => model.Value.Media)
         </dt>
         <dd class = "col-sm-10">
-            @if (Model.Media != null)
+            @if (Model.Value.Media != null)
             {
                 // Embed photo in page; good for security but bad for speed
-                var base64 = Convert.ToBase64String(Model.Media);
+                var base64 = Convert.ToBase64String(Model.Value.Media);
                 var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
                 <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
             }
         </dd>
     </dl>
+    <h4>Movies</h4>
+    <ul>
+        @foreach (var movie in Model.Movies)
+        {
+            <li>
+                @movie.Title |
+                <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.Id">Details</a>
+            </li>
+        }
+    </ul>
+
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Value?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

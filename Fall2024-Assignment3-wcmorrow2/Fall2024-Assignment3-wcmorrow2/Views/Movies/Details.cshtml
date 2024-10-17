@@ -1,4 +1,4 @@
-﻿@model Fall2024_Assignment3_wcmorrow2.Models.Movie
+﻿@model Fall2024_Assignment3_wcmorrow2.Models.MovieDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -11,38 +11,48 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
+            @Html.DisplayNameFor(model => model.Value.Title)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
+            @Html.DisplayFor(model => model.Value.Title)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Year)
+            @Html.DisplayNameFor(model => model.Value.Year)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Year)
+            @Html.DisplayFor(model => model.Value.Year)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IMDBlink)
+            @Html.DisplayNameFor(model => model.Value.IMDBlink)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IMDBlink)
+            @Html.DisplayFor(model => model.Value.IMDBlink)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Media)
+            @Html.DisplayNameFor(model => model.Value.Media)
         </dt>
         <dd class = "col-sm-10">
-            @if (Model.Media != null)
+            @if (Model.Value.Media != null)
             {
                 // Embed photo in page; good for security but bad for speed
-                var base64 = Convert.ToBase64String(Model.Media);
+                var base64 = Convert.ToBase64String(Model.Value.Media);
                 var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
                 <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
             }
         </dd>
     </dl>
+    <h4>Actors</h4>
+    <ul>
+        @foreach (var actor in Model.Actors)
+        {
+            <li>
+                @actor.Name |
+                <a asp-action="Details" asp-controller="Actors" asp-route-id="@actor.Id">Details</a>
+            </li>
+        }
+    </ul>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Value?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

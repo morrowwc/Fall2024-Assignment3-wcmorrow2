@@ -29,22 +29,24 @@
             </div>
             <div class="form-group">
                 <label asp-for="DoB" class="control-label"></label>
-                <input asp-for="DoB" class="form-control" />
+                <input asp-for="DoB" class="form-control" type="date" />
                 <span asp-validation-for="DoB" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="DoD" class="control-label"></label>
-                <input asp-for="DoD" class="form-control" />
+                <input asp-for="DoD" class="form-control" type="date" />
                 <span asp-validation-for="DoD" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="IMDBlink" class="control-label"></label>
                 <input asp-for="IMDBlink" type="url" class="form-control" />
                 <span asp-validation-for="IMDBlink" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Media" class="control-label"></label>
-                <input type="file" id="Media" name="Media" class="form-control" />
+                <input asp-for="Media" class="form-control" type="file" />
                 <span asp-validation-for="Media" class="text-danger"></span>
             </div>
             <div class="form-group">
