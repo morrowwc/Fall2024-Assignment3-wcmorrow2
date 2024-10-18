@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
 using System.Numerics;
+using System.Diagnostics;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -63,7 +64,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile Media)
+        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile? Media)
         {
            
             if (ModelState.IsValid)
@@ -73,6 +74,13 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                     using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
                     await Media.CopyToAsync(memoryStream);
                     movie.Media = memoryStream.ToArray();
+                    memoryStream.Dispose();
+                }
+                else
+                {
+                    var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "poster.jpg");
+                    movie.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+
                 }
                 _context.Add(movie);
                 await _context.SaveChangesAsync();
@@ -102,7 +110,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile Media)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile? Media)
         {
             if (id != movie.Id)
             {
@@ -113,12 +121,25 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 try
                 {
+                    var existingMovie = await _context.Movie.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                    if (existingMovie == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // Retain existing media if no new file is uploaded
                     if (Media != null && Media.Length > 0)
                     {
-                        using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
+                        using var memoryStream = new MemoryStream();
                         await Media.CopyToAsync(memoryStream);
                         movie.Media = memoryStream.ToArray();
+                        memoryStream.Dispose();
                     }
+                    else
+                    {
+                        movie.Media = existingMovie.Media;
+                    }
+
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
                 }
@@ -137,6 +158,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
             return View(movie);
         }
+
 
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)
