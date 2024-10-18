@@ -67,30 +67,26 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Gender,DoB,DoD,IMDBlink,Media")] Actor actor, IFormFile Media)
+        public async Task<IActionResult> Create([Bind("Id,Name,Gender,DoB,DoD,IMDBlink,Media")] Actor actor, IFormFile? Media)
         {
-            if (Media != null && Media.Length > 0)
-            {
-                using var memoryStream = new MemoryStream();
-                await Media.CopyToAsync(memoryStream);
-                actor.Media = memoryStream.ToArray();
-                memoryStream.Dispose();
-
-            }
-            else
-            {
-                // Load the default image from a file or an embedded resource
-                var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "profile.jpg");
-                actor.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
-                Debug.WriteLine("Default image loaded");
-            }
-            
             if (ModelState.IsValid)
             {
-                
+                if (Media != null && Media.Length > 0)
+                {
+                    using var memoryStream = new MemoryStream();
+                    await Media.CopyToAsync(memoryStream);
+                    actor.Media = memoryStream.ToArray();
+                    memoryStream.Dispose();
+
+                }
+                else
+                {
+                    // Load the default image from a file or an embedded resource
+                    var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "profile.jpg");
+                    actor.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+                }
                 _context.Add(actor);
                 await _context.SaveChangesAsync();
-                Debug.WriteLine("Changes Saved");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -118,7 +114,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,DoB,DoD,IMDBlink,Media")] Actor actor, IFormFile Media)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Gender,DoB,DoD,IMDBlink,Media")] Actor actor, IFormFile? Media)
         {
             if (id != actor.Id)
             {
@@ -129,6 +125,11 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 try
                 {
+                    var existingActor = await _context.Actor.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
+                    if (existingActor == null)
+                    {
+                        return NotFound();
+                    }
                     if (Media != null && Media.Length > 0)
                     {
                         using var memoryStream = new MemoryStream(); // Dispose() for garbage collection 
@@ -138,9 +139,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                     }
                     else
                     {
-                        // Load the default image from a file or an embedded resource
-                        var defaultImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "assets", "profile.jpg");
-                        actor.Media = await System.IO.File.ReadAllBytesAsync(defaultImagePath);
+                        actor.Media = existingActor.Media;
                     }
                     _context.Update(actor);
                     await _context.SaveChangesAsync();
