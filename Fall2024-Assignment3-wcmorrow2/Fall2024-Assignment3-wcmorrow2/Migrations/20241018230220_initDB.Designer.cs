@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241016183704_initDB")]
+    [Migration("20241018230220_initDB")]
     partial class initDB
     {
         /// <inheritdoc />
@@ -66,6 +66,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("IMDBlink")
                         .IsRequired()

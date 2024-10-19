@@ -11,7 +11,9 @@
     }
     public class MovieDetailsViewModel : DetailsViewModel<Movie>
     {
-        public List<Actor?> Actors { get; set; }
+        public List<Actor?>? Actors { get; set; }
+        // lists the review and the sentiment analysis
+        public List<(string, string)?>? Reviews { get; set; }
     }
 
 }

@@ -22,10 +22,16 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Value.Year)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Value.Genre)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Value.Genre)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Value.IMDBlink)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Value.IMDBlink)
         </dd>
         <dt class = "col-sm-2">
@@ -41,6 +47,7 @@
             }
         </dd>
     </dl>
+    <hr />
     <h4>Actors</h4>
     <ul>
         @foreach (var actor in Model.Actors)
@@ -51,6 +58,19 @@
             </li>
         }
     </ul>
+    <hr />
+    <dl class="row">
+        @if(Model.Reviews != null)
+        {
+            foreach (var review in Model.Reviews)
+            {
+                <dt>Review</dt>
+                <dd>Sentiment</dd>
+            }
+        }
+    </dl>
+    <a asp-action="GenerateReview" asp-route-id="@Model.Value?.Id">+ New Review</a>
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Value?.Id">Edit</a> |

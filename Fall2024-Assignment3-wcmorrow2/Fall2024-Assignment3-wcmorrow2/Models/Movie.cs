@@ -15,6 +15,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Models
         public string Title { get; set; }
         [Required]
         public int Year { get; set; }
+        public string Genre { get; set; }
         [Required]
         [DisplayName("IMDB Link")]
         public string IMDBlink { get; set; }

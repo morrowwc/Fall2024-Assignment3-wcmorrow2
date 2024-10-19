@@ -76,6 +76,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IMDBlink = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
                 },

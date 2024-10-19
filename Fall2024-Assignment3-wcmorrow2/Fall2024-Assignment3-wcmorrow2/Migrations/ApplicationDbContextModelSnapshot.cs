@@ -64,6 +64,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("IMDBlink")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

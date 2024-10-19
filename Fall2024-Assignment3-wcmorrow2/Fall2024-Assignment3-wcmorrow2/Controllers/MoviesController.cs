@@ -48,6 +48,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                     .Where(ma => ma.MovieId == id)
                     .Select(ma => ma.Actor)
                     .ToList()
+                
             };
 
             return View(movieDetailsViewModel);
@@ -64,9 +65,9 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile? Media)
+        public async Task<IActionResult> Create([Bind("Id,Title,Year,Genre,IMDBlink,Media")] Movie movie, IFormFile? Media)
         {
-           
+
             if (ModelState.IsValid)
             {
                 if (Media != null && Media.Length > 0)
@@ -110,7 +111,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,IMDBlink,Media")] Movie movie, IFormFile? Media)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,Genre,IMDBlink,Media")] Movie movie, IFormFile? Media)
         {
             if (id != movie.Id)
             {
@@ -212,6 +213,15 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             var imageData = movie.Media;
 
             return File(imageData, "image/jpg");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> GenerateReview(int id)
+        {
+            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
+            Debug.WriteLine($"{movie.Title} sucks 2/10");
+            return View(movie);
         }
     }
 }
