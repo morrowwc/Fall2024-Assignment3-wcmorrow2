@@ -1,4 +1,5 @@
-﻿@model Fall2024_Assignment3_wcmorrow2.Models.MovieDetailsViewModel
+﻿@using Newtonsoft.Json
+@model Fall2024_Assignment3_wcmorrow2.Models.MovieDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -59,17 +60,41 @@
         }
     </ul>
     <hr />
-    <dl class="row">
-        @if(Model.Reviews != null)
-        {
-            foreach (var review in Model.Reviews)
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Review</th>
+                <th>Sentiment</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model.Value.Reviews)
             {
-                <dt>Review</dt>
-                <dd>Sentiment</dd>
+                var tweetData = JsonConvert.DeserializeObject<dynamic>(review.Content);
+
+                <tr>
+                    <td>
+                        <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
+                        <p>@tweetData.text</p>
+                        <p><small>Created at: @tweetData.created_at</small></p>
+                        <p><small>Followers: @tweetData.user.followers_count</small></p>
+                        <p><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></p>
+                        <p><small>Hashtags: @string.Join(", ", tweetData.hashtags)</small></p>
+                    </td>
+                    <td>@review.SentimentScore</td>
+                    <td>
+                        <form asp-action="DeleteReview" method="post">
+                            <input type="hidden" name="id" value="@review.Id" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    
+                    </td>
+                </tr>
             }
-        }
-    </dl>
-    <a asp-action="GenerateReview" asp-route-id="@Model.Value?.Id">+ New Review</a>
+        </tbody>
+    </table>
+    <a asp-action="GenerateReview" asp-route-id="@Model.Value?.Id" class="btn btn-primary">New Review</a>
+    <hr />
 
 </div>
 <div>

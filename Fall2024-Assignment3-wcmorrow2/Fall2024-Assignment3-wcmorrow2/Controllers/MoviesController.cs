@@ -9,16 +9,22 @@ using Fall2024_Assignment3_wcmorrow2.Data;
 using Fall2024_Assignment3_wcmorrow2.Models;
 using System.Numerics;
 using System.Diagnostics;
+using OpenAI.Chat;
+using Microsoft.AspNetCore.Routing;
+using Azure.AI.OpenAI;
+using VaderSharp2;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
     public class MoviesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IConfiguration _config;
 
-        public MoviesController(ApplicationDbContext context)
+        public MoviesController(ApplicationDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         // GET: Movies
@@ -36,6 +42,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             }
 
             var movie = await _context.Movie
+                .Include(m => m.Reviews) // Include related reviews
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movie == null)
             {
@@ -48,7 +55,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                     .Where(ma => ma.MovieId == id)
                     .Select(ma => ma.Actor)
                     .ToList()
-                
+
             };
 
             return View(movieDetailsViewModel);
@@ -187,6 +194,10 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             var movie = await _context.Movie.FindAsync(id);
             if (movie != null)
             {
+                foreach (Review review in movie.Reviews)
+                {
+                    _context.Review.Remove(review);
+                }
                 _context.Movie.Remove(movie);
             }
 
@@ -214,14 +225,76 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
 
             return File(imageData, "image/jpg");
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
+        [HttpGet]
         public async Task<IActionResult> GenerateReview(int id)
         {
             var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == id);
-            Debug.WriteLine($"{movie.Title} sucks 2/10");
-            return View(movie);
+            if (movie == null)
+            {
+                return NotFound();
+            }
+            var content = await CallGenerateReviewApi(movie);
+            // sentiment analysis
+            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
+            var score = analyzer.PolarityScores(content);
+
+            Review review = new Review()
+            {
+                Content = content,
+                SentimentScore = score.ToString(),
+                MovieId = id,
+                Movie = movie
+            };
+            _context.Review.Add(review);
+            movie.Reviews.Add(review);
+            // Save changes to the database
+            _context.Update(movie);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = movie.Id });
         }
+
+        private async Task<string> CallGenerateReviewApi(Movie movie)
+        {
+            var api_key = new System.ClientModel.ApiKeyCredential(_config["AI_API_KEY"] ?? throw new Exception("AI_API_KEY does not exist in the current Configuration"));
+            var api_endpoint = new Uri(_config["AI_API_ENDPOINT"] ?? throw new Exception("AI_API_ENDPOINT does not exist in the current Configuration"));
+            AzureOpenAIClient client = new(api_endpoint, api_key);
+            ChatClient chat = client.GetChatClient("gpt-35-turbo");
+
+            List<string> sentimentList = ["harsh", "very literal", "easy to please", "critical of everything", "more into the books"];
+            List<string> genreList = ["sci-fi", "fantasy", "documentaries", "sports", "old movies", "new movies"];
+            Random random = new Random();
+
+            // Select a random item from sentimentList
+            string sentiment = sentimentList[random.Next(sentimentList.Count)];
+            // Select a random item from genreList
+            string favGenre = genreList[random.Next(genreList.Count)];
+
+            ChatCompletion completion = await chat.CompleteChatAsync($"Give a twitter api response in json format {{\r\n  \"text\": \"\",\r\n  \"created_at\": \"Date Time Year\",\r\n  \"user\": {{\r\n    \"name\": \"\",\r\n    \"screen_name\": \"\",\r\n    \"followers_count\": int,\r\n    \"verified\": bool\r\n  }},\r\n  \"retweet_count\": int,\r\n  \"favorite_count\": int,\r\n  \"hashtags\": [],\r\n }}." +
+                $"The tweet should be an honest review of {movie.Title} from {movie.Year.ToString()} by a movie reviewer who is {sentiment} and likes {favGenre}." +
+                $" They do not have to directly mention their tastes, but you can let it affect their review. Keep the review less than four sentences.");
+
+            Debug.WriteLine(completion.Content[0].Text);
+            return completion.Content[0].Text;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            var review = await _context.Review.FindAsync(id);
+            if (review == null)
+            {
+                return NotFound();
+            }
+
+            var movieId = review.MovieId;
+
+            _context.Review.Remove(review);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = movieId });
+        }
+
     }
 }

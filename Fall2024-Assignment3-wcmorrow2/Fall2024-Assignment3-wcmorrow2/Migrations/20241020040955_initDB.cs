@@ -215,6 +215,27 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Review",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SentimentScore = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Review", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Review_Movie_MovieId",
+                        column: x => x.MovieId,
+                        principalTable: "Movie",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -263,6 +284,11 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                 name: "IX_MovieActor_MovieId",
                 table: "MovieActor",
                 column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Review_MovieId",
+                table: "Review",
+                column: "MovieId");
         }
 
         /// <inheritdoc />
@@ -285,6 +311,9 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
 
             migrationBuilder.DropTable(
                 name: "MovieActor");
+
+            migrationBuilder.DropTable(
+                name: "Review");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

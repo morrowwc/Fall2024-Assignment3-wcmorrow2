@@ -15,6 +15,11 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// Secrets
+//var api_key = builder.Configuration["AI_API_KEY"];
+
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
