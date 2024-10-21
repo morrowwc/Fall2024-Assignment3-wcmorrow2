@@ -13,7 +13,7 @@ using OpenAI.Chat;
 using Microsoft.AspNetCore.Routing;
 using Azure.AI.OpenAI;
 using VaderSharp2;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -241,19 +241,14 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             Review review = new Review()
             {
                 Content = content,
-                SentimentScore = JsonSerializer.Serialize(score),
+                SentimentScore = JsonConvert.SerializeObject(score),
                 MovieId = id,
                 Movie = movie
             };
             _context.Review.Add(review);
             movie.Reviews.Add(review);
 
-            var all_reviews = "";
-            foreach (Review r in movie.Reviews) 
-            {
-                all_reviews += r.Content;
-            }
-            movie.SentimentSum = JsonSerializer.Serialize(analyzer.PolarityScores(all_reviews));
+            await UpdateSumSentiment(id);
             // Save changes to the database
             _context.Update(movie);
             await _context.SaveChangesAsync();
@@ -296,10 +291,34 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             var movieId = review.MovieId;
 
             _context.Review.Remove(review);
+            await UpdateSumSentiment(movieId);
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = movieId });
         }
 
+        public async Task<int> UpdateSumSentiment(int id) {
+
+            var movie = await _context.Movie
+                .FirstOrDefaultAsync(m => m.Id == id);
+            SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
+
+            var all_reviews = "";
+            if (movie.Reviews.Count > 0)
+            {
+                foreach (Review r in movie.Reviews)
+                {
+                    all_reviews += r.Content;
+                }
+                movie.SentimentSum = JsonConvert.SerializeObject(analyzer.PolarityScores(all_reviews));
+            }
+            else
+            {
+                movie.SentimentSum = JsonConvert.SerializeObject(new VaderSharp2.SentimentAnalysisResults());
+
+            }
+            return id;
+        }
     }
 }

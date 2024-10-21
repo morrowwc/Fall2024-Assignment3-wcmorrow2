@@ -1,4 +1,4 @@
-﻿@using System.Text.Json
+﻿@using Newtonsoft.Json;
 @model Fall2024_Assignment3_wcmorrow2.Models.MovieDetailsViewModel
 
 @{
@@ -62,17 +62,15 @@
     <hr />
     @{
         var defaultSentiment = new VaderSharp2.SentimentAnalysisResults();
-        string defaultSentimentJson = JsonSerializer.Serialize(defaultSentiment);
+        string defaultSentimentJson = JsonConvert.SerializeObject(defaultSentiment);
 
-
-        var sumScore = JsonSerializer.Deserialize<VaderSharp2.SentimentAnalysisResults>(Model.Value.SentimentSum ?? defaultSentimentJson);
+        dynamic sumScore = JsonConvert.DeserializeObject(Model.Value.SentimentSum ?? defaultSentimentJson);
     }
 
-    <span>@sumScore.ToString()</span>
-    <span>@sumScore.Compound.ToString()</span>
-    <span>@sumScore.Positive.ToString()</span>
-    <span>@sumScore.Neutral.ToString()</span>
-    <span>@sumScore.Negative.ToString()</span>
+    <span>Compound : @sumScore.Compound.ToString()</span>
+    <span>Positive : @sumScore.Positive.ToString()</span>
+    <span>Neutral : @sumScore.Neutral.ToString()</span>
+    <span>Negative : @sumScore.Negative.ToString()</span>
     <table class="table">
         <thead>
             <tr>
@@ -83,32 +81,22 @@
         <tbody>
             @foreach (var review in Model.Value.Reviews)
             {
-                var tweetData = JsonSerializer.Deserialize<dynamic>(review.Content);
-                var score = defaultSentiment;
-                try
-                {
-                    score = JsonSerializer.Deserialize<VaderSharp2.SentimentAnalysisResults>(review.SentimentScore);
-                    // Use score as needed
-                }
-                catch (JsonException ex)
-                {
-                   
-                }
+                dynamic tweetData = JsonConvert.DeserializeObject(review.Content);
+                dynamic score = JsonConvert.DeserializeObject(review.SentimentScore);
+
                 <tr>
                     <td>
                         <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
                         <p>@tweetData.text</p>
-                        <p><small>Created at: @tweetData.created_at</small></p>
-                        <p><small>Followers: @tweetData.user.followers_count</small></p>
-                        <p><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></p>
-                        <p><small>Hashtags: @string.Join(", ", tweetData.hashtags)</small></p>
+                        <div><small>Created at: @tweetData.created_at</small></div>
+                        <div><small>Followers: @tweetData.user.followers_count</small></div>
+                        <div><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></div>
                     </td>
                     <td>
-                        <p>@review.SentimentScore</p>
-                        <p>@score.Compound.ToString()</p>
-                        <p>@score.Positive.ToString()</p>
-                        <p>@score.Neutral.ToString()</p>
-                        <p>@score.Negative.ToString()</p>
+                        <div>Compound : @score.Compound.ToString()</div>
+                        <div>Positive : @score.Positive.ToString()</div>
+                        <div>Neutral : @score.Neutral.ToString()</div>
+                        <div>Negative : @score.Negative.ToString()</div>
                     </td>
                     <td>
                         <form asp-action="DeleteReview" method="post">
