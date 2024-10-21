@@ -13,6 +13,7 @@ using OpenAI.Chat;
 using Microsoft.AspNetCore.Routing;
 using Azure.AI.OpenAI;
 using VaderSharp2;
+using System.Text.Json;
 
 namespace Fall2024_Assignment3_wcmorrow2.Controllers
 {
@@ -237,23 +238,28 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             // sentiment analysis
             SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
             var score = analyzer.PolarityScores(content);
-
             Review review = new Review()
             {
                 Content = content,
-                SentimentScore = score.ToString(),
+                SentimentScore = JsonSerializer.Serialize(score),
                 MovieId = id,
                 Movie = movie
             };
             _context.Review.Add(review);
             movie.Reviews.Add(review);
+
+            var all_reviews = "";
+            foreach (Review r in movie.Reviews) 
+            {
+                all_reviews += r.Content;
+            }
+            movie.SentimentSum = JsonSerializer.Serialize(analyzer.PolarityScores(all_reviews));
             // Save changes to the database
             _context.Update(movie);
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", new { id = movie.Id });
         }
-
         private async Task<string> CallGenerateReviewApi(Movie movie)
         {
             var api_key = new System.ClientModel.ApiKeyCredential(_config["AI_API_KEY"] ?? throw new Exception("AI_API_KEY does not exist in the current Configuration"));
@@ -277,7 +283,6 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             Debug.WriteLine(completion.Content[0].Text);
             return completion.Content[0].Text;
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteReview(int id)

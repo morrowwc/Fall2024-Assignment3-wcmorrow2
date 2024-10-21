@@ -1,4 +1,4 @@
-﻿@using Newtonsoft.Json
+﻿@using System.Text.Json
 @model Fall2024_Assignment3_wcmorrow2.Models.MovieDetailsViewModel
 
 @{
@@ -60,6 +60,19 @@
         }
     </ul>
     <hr />
+    @{
+        var defaultSentiment = new VaderSharp2.SentimentAnalysisResults();
+        string defaultSentimentJson = JsonSerializer.Serialize(defaultSentiment);
+
+
+        var sumScore = JsonSerializer.Deserialize<VaderSharp2.SentimentAnalysisResults>(Model.Value.SentimentSum ?? defaultSentimentJson);
+    }
+
+    <span>@sumScore.ToString()</span>
+    <span>@sumScore.Compound.ToString()</span>
+    <span>@sumScore.Positive.ToString()</span>
+    <span>@sumScore.Neutral.ToString()</span>
+    <span>@sumScore.Negative.ToString()</span>
     <table class="table">
         <thead>
             <tr>
@@ -70,8 +83,17 @@
         <tbody>
             @foreach (var review in Model.Value.Reviews)
             {
-                var tweetData = JsonConvert.DeserializeObject<dynamic>(review.Content);
-
+                var tweetData = JsonSerializer.Deserialize<dynamic>(review.Content);
+                var score = defaultSentiment;
+                try
+                {
+                    score = JsonSerializer.Deserialize<VaderSharp2.SentimentAnalysisResults>(review.SentimentScore);
+                    // Use score as needed
+                }
+                catch (JsonException ex)
+                {
+                   
+                }
                 <tr>
                     <td>
                         <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
@@ -81,7 +103,13 @@
                         <p><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></p>
                         <p><small>Hashtags: @string.Join(", ", tweetData.hashtags)</small></p>
                     </td>
-                    <td>@review.SentimentScore</td>
+                    <td>
+                        <p>@review.SentimentScore</p>
+                        <p>@score.Compound.ToString()</p>
+                        <p>@score.Positive.ToString()</p>
+                        <p>@score.Neutral.ToString()</p>
+                        <p>@score.Negative.ToString()</p>
+                    </td>
                     <td>
                         <form asp-action="DeleteReview" method="post">
                             <input type="hidden" name="id" value="@review.Id" />

@@ -75,6 +75,9 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                     b.Property<byte[]>("Media")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("SentimentSum")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

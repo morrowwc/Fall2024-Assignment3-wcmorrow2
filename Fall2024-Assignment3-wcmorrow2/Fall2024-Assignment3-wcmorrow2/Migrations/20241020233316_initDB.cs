@@ -78,7 +78,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                     Year = table.Column<int>(type: "int", nullable: false),
                     Genre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IMDBlink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    SentimentSum = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
