@@ -262,7 +262,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             AzureOpenAIClient client = new(api_endpoint, api_key);
             ChatClient chat = client.GetChatClient("gpt-35-turbo");
 
-            List<string> sentimentList = ["harsh", "very literal", "easy to please", "critical of everything", "more into the books"];
+            List<string> sentimentList = ["harsh", "very literal", "easy to please", "critical of everything", "more into the books", "always referencing the Fast and the Furious franchise"];
             List<string> genreList = ["sci-fi", "fantasy", "documentaries", "sports", "old movies", "new movies"];
             Random random = new Random();
 
@@ -288,14 +288,21 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return NotFound();
             }
 
-            var movieId = review.MovieId;
-
-            _context.Review.Remove(review);
-            await UpdateSumSentiment(movieId);
+            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == review.MovieId); ;
+            try
+            {
+                _context.Review.Remove(review);
+                await UpdateSumSentiment(movie.Id);
+                _context.Update(movie);
+            }
+            catch
+            {
+                return NotFound();
+            }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", new { id = movieId });
+            return RedirectToAction("Details", new { id = movie.Id });
         }
 
         public async Task<int> UpdateSumSentiment(int id) {
@@ -304,9 +311,9 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 .FirstOrDefaultAsync(m => m.Id == id);
             SentimentIntensityAnalyzer analyzer = new SentimentIntensityAnalyzer();
 
-            var all_reviews = "";
             if (movie.Reviews.Count > 0)
             {
+                var all_reviews = "";
                 foreach (Review r in movie.Reviews)
                 {
                     all_reviews += r.Content;

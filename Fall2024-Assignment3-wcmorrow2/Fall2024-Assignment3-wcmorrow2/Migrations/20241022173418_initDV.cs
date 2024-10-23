@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class initDV : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

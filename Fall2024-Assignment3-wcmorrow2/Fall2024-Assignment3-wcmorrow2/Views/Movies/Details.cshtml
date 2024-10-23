@@ -85,19 +85,25 @@
                 dynamic score = JsonConvert.DeserializeObject(review.SentimentScore);
 
                 <tr>
-                    <td>
-                        <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
-                        <p>@tweetData.text</p>
-                        <div><small>Created at: @tweetData.created_at</small></div>
-                        <div><small>Followers: @tweetData.user.followers_count</small></div>
-                        <div><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></div>
-                    </td>
-                    <td>
-                        <div>Compound : @score.Compound.ToString()</div>
-                        <div>Positive : @score.Positive.ToString()</div>
-                        <div>Neutral : @score.Neutral.ToString()</div>
-                        <div>Negative : @score.Negative.ToString()</div>
-                    </td>
+                    @try{
+                        <td>
+                            <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
+                            <p>@tweetData.text</p>
+                            <div><small>Created at: @tweetData.created_at</small></div>
+                            <div><small>Followers: @tweetData.user.followers_count</small></div>
+                            <div><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></div>
+                        </td>
+                        <td>
+                            <div>Compound : @score.Compound.ToString()</div>
+                            <div>Positive : @score.Positive.ToString()</div>
+                            <div>Neutral : @score.Neutral.ToString()</div>
+                            <div>Negative : @score.Negative.ToString()</div>
+                        </td>
+                    }catch{
+                        <td>Invalid Review Format</td>
+                        <td>Please Delete</td>
+                    }
+                    
                     <td>
                         <form asp-action="DeleteReview" method="post">
                             <input type="hidden" name="id" value="@review.Id" />
