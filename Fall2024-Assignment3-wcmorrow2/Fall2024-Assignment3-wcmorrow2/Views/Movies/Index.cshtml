@@ -4,62 +4,68 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Movies</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IMDBlink)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Media)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Year)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Genre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IMDBlink)
-            </td>
-            <td>
-                    @if (item.Media != null)
-                    {
-                        // Embed photo in page; good for security but bad for speed
-                        var base64 = Convert.ToBase64String(item.Media);
-                        var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                        <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
-                    }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="m-0 font-weight-bold text-primary">
+            <h1 class="m-0 font-weight-bold text-primary">Movies</h1>
+            <h6 class="m-0 font-weight-light text-primary">
+                <a asp-action="Create">Create New</a>
+            </h6>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Title: activate to sort column descending" style="width: 100px;">@Html.DisplayNameFor(model => model.Title)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Year: activate to sort column ascending" style="width: 60px;">@Html.DisplayNameFor(model => model.Year)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Genre: activate to sort column ascending" style="width: 90px;">@Html.DisplayNameFor(model => model.Genre)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="IMDBlink: activate to sort column ascending" style="width: 100px;">@Html.DisplayNameFor(model => model.IMDBlink)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Media" style="width: 67px;">@Html.DisplayNameFor(model => model.Media)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Actions" style="width: 70px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="odd">
+                                        <td class="sorting_1">
+                                            @Html.DisplayFor(modelItem => item.Title)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Year)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Genre)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.IMDBlink)
+                                        </td>
+                                        <td>
+                                            @if (item.Media != null)
+                                            {
+                                                // Embed photo in page; good for security but bad for speed
+                                                var base64 = Convert.ToBase64String(item.Media);
+                                                var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                                <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <br />
+                                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> <br />
+                                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
