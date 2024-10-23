@@ -50,15 +50,34 @@
     </dl>
     <hr />
     <h4>Actors</h4>
-    <ul>
+    <div class="row">
         @foreach (var actor in Model.Actors)
         {
-            <li>
-                @actor.Name |
-                <a asp-action="Details" asp-controller="Actors" asp-route-id="@actor.Id">Details</a>
-            </li>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">@actor.Name</div>
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    <a asp-action="Details" asp-controller="Actors" asp-route-id="@actor.Id">Details</a>
+                                </div>
+                            </div>
+                            <div class="col-auto">
+                                @if (actor.Media != null)
+                                {
+                                    // Embed photo in page; good for security but bad for speed
+                                    var base64 = Convert.ToBase64String(actor.Media);
+                                    var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                    <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </ul>
+    </div>
     <hr />
     @{
         var defaultSentiment = new VaderSharp2.SentimentAnalysisResults();

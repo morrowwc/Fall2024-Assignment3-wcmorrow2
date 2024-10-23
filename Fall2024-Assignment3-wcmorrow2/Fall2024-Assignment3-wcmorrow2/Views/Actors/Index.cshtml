@@ -4,70 +4,77 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Actors</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gender)
-            </th>
-            <th>
-                Age
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IMDBlink)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Media)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @{
-                    var birthDate = item.DoB;
-                    var deathDate = item.DoD;
-                    var age = deathDate.HasValue
-                    ? deathDate.Value.Year - birthDate.Year - (deathDate.Value.DayOfYear < birthDate.DayOfYear ? 1 : 0)
-                    : DateTime.Now.Year - birthDate.Year - (DateTime.Now.DayOfYear < birthDate.DayOfYear ? 1 : 0);
-                }
-                @age
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IMDBlink)
-            </td>
-            <td>
-                    @if (item.Media != null)
-                    {
-                        // Embed photo in page; good for security but bad for speed
-                        var base64 = Convert.ToBase64String(item.Media);
-                        var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                        <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="m-0 font-weight-bold text-primary">
+            <h1 class="m-0 font-weight-bold text-primary">Actors</h1>
+            <h6 class="m-0 font-weight-light text-primary">
+                <a asp-action="Create">Create New</a>
+            </h6>
+            
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                <div class="row"><div class="col-sm-12 col-md-6"><div class="dataTables_length" id="dataTable_length"><label>Show <select name="dataTable_length" aria-controls="dataTable" class="custom-select custom-select-sm form-control form-control-sm"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div></div><div class="col-sm-12 col-md-6"><div id="dataTable_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dataTable"></label></div></div></div><div class="row">
+                    <div class="col-sm-12">
+                        <table class="table table-bordered dataTable" id="dataTable" width="100%" cellspacing="0" role="grid" aria-describedby="dataTable_info" style="width: 100%;">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 57px;">@Html.DisplayNameFor(model => model.Name)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Gender: activate to sort column ascending" style="width: 61px;">@Html.DisplayNameFor(model => model.Gender)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 31px;">Age</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 80px;">@Html.DisplayNameFor(model => model.IMDBlink)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Media" style="width: 67px;">@Html.DisplayNameFor(model => model.Media)</th>
+                                    <th class="sorting" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-label="Actions" style="width: 70px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="odd">
+                                        <td class="sorting_1">
+                                            @Html.DisplayFor(modelItem => item.Name)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Gender)
+                                        </td>
+                                        <td>
+                                            @{
+                                                var birthDate = item.DoB;
+                                                var deathDate = item.DoD;
+                                                var age = deathDate.HasValue
+                                                ? deathDate.Value.Year - birthDate.Year - (deathDate.Value.DayOfYear < birthDate.DayOfYear ? 1 : 0)
+                                                : DateTime.Now.Year - birthDate.Year - (DateTime.Now.DayOfYear < birthDate.DayOfYear ? 1 : 0);
+                                            }
+                                            @age
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.IMDBlink)
+                                        </td>
+                                        <td>
+                                            @if (item.Media != null)
+                                            {
+                                                // Embed photo in page; good for security but bad for speed
+                                                var base64 = Convert.ToBase64String(item.Media);
+                                                var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                                <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
 
-                    }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <br />
+                                            <a asp-action="Details" asp-route-id="@item.Id">Details</a> <br />
+                                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
