@@ -52,7 +52,7 @@
                                             @age
                                         </td>
                                         <td>
-                                            @Html.DisplayFor(modelItem => item.IMDBlink)
+                                            <a href=" @Html.DisplayFor(modelItem => item.IMDBlink)">  @Html.DisplayFor(modelItem => item.IMDBlink)</a>
                                         </td>
                                         <td>
                                             @if (item.Media != null)

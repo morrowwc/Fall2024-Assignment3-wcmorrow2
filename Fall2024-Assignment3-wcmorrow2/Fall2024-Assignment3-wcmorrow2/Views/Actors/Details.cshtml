@@ -4,90 +4,81 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Actor</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.Gender)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value.Gender)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.DoB)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value.DoB)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.DoD)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value.DoD)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.IMDBlink)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Value.IMDBlink)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Value.Media)
-        </dt>
-        <dd class = "col-sm-10">
-            @if (Model.Value.Media != null)
-            {
-                // Embed photo in page; good for security but bad for speed
-                var base64 = Convert.ToBase64String(Model.Value.Media);
-                var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
-            }
-        </dd>
-    </dl>
-    <h4>Movies</h4>
-    <div class="row">
-        @foreach (var movie in Model.Movies)
-        {
-            <div class="col-xl-3 col-md-6 mb-4">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <div class="m-0 font-weight-bold text-primary">
+            <h1 class="m-0 font-weight-bold text-primary">Details</h1>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-4">
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">@movie.Title</div>
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.Id">Details</a>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                @if (movie.Media != null)
+                        <h4>>@Html.DisplayFor(model => model.Value.Name)</h4>
+                        <hr />
+                        <dl class="row">
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.Gender)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.Gender)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.DoB)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.DoB)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.DoD)</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.DoD)</dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.IMDBlink)</dt>
+                            <dd class="col-sm-8"><a href="@Html.DisplayFor(model => model.Value.IMDBlink)"> @Html.DisplayFor(model => model.Value.IMDBlink)</a></dd>
+
+                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.Media)</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.Value.Media != null)
                                 {
-                                    // Embed photo in page; good for security but bad for speed
-                                    var base64 = Convert.ToBase64String(movie.Media);
+                                    var base64 = Convert.ToBase64String(Model.Value.Media);
                                     var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                                    <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
+                                    <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
                                 }
-                            </div>
-                        </div>
+                            </dd>
+                        </dl>
                     </div>
                 </div>
             </div>
-        }
-    </div>
-    <ul>
-        
-    </ul>
 
+            <div class="col-md-8">
+                <h4>Movies</h4>
+                <div class="row">
+                    @foreach (var movie in Model.Movies)
+                    {
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-4">
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">@movie.Title</div>
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                <a asp-action="Details" asp-controller="Movies" asp-route-id="@movie.Id">Details</a>
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            @if (movie.Media != null)
+                                            {
+                                                var base64 = Convert.ToBase64String(movie.Media);
+                                                var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
+                                                <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Value?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Value?.Id" class="btn btn-primary">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>
