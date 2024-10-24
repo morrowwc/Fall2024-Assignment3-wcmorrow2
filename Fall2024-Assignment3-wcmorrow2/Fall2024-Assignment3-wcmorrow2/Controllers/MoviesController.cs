@@ -195,6 +195,14 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             var movie = await _context.Movie.FindAsync(id);
             if (movie != null)
             {
+                var mas = await _context.MovieActor
+                    .Where(ma => ma.MovieId == id)
+                    .ToListAsync();
+                foreach (var ma in mas)
+                {
+                    _context.MovieActor.Remove(ma);
+                }
+
                 foreach (Review review in movie.Reviews)
                 {
                     _context.Review.Remove(review);
@@ -288,7 +296,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == review.MovieId); ;
+            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == review.MovieId); 
             try
             {
                 _context.Review.Remove(review);

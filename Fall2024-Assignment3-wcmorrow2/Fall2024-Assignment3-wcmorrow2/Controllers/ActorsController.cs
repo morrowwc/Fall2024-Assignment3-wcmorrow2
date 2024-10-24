@@ -186,6 +186,13 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             var actor = await _context.Actor.FindAsync(id);
             if (actor != null)
             {
+                var mas = await _context.MovieActor
+                    .Where(ma => ma.ActorId == id)
+                    .ToListAsync();
+                foreach (var ma in mas)
+                {
+                    _context.MovieActor.Remove(ma);
+                }
                 _context.Actor.Remove(actor);
             }
 
