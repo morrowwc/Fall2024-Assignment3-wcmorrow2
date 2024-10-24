@@ -36,7 +36,7 @@
                                 {
                                     var base64 = Convert.ToBase64String(Model.Value.Media);
                                     var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                                    <img src="@imgSrc" height="100" width="100" style="border-radius:50%" />
+                                        <img src="@imgSrc" height="100" style="border-radius:3%; object-fit: cover" />
                                 }
                             </dd>
                         </dl>
@@ -64,7 +64,7 @@
                                             {
                                                 var base64 = Convert.ToBase64String(movie.Media);
                                                 var imgSrc = string.Format("data:image/jpg;base64,{0}", base64);
-                                                <img src="@imgSrc" height="100" width="100" style="border-radius:3%" />
+                                                <img src="@imgSrc" height="100" style="border-radius:3%; object-fit: cover" />
                                             }
                                         </div>
                                     </div>
