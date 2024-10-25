@@ -25,5 +25,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Models
         [DisplayName("Photo / Media")]
         public byte[]? Media { get; set; }
 
+        public List<Review> Reviews { get; set; } = new List<Review>();
+        public string? SentimentSum { get; set; }
+
     }
 }

@@ -250,8 +250,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             {
                 Content = content,
                 SentimentScore = JsonConvert.SerializeObject(score),
-                MovieId = id,
-                Movie = movie
+                ContentId = id
             };
             _context.Review.Add(review);
             movie.Reviews.Add(review);
@@ -296,7 +295,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == review.MovieId); 
+            var movie = await _context.Movie.FirstOrDefaultAsync(m => m.Id == review.ContentId); 
             try
             {
                 _context.Review.Remove(review);

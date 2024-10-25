@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241022173418_initDV")]
-    partial class initDV
+    [Migration("20241025174344_initDB")]
+    partial class initDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,6 +52,9 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SentimentSum")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -124,11 +127,17 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("ActorId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MovieId")
+                    b.Property<int>("ContentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MovieId")
                         .HasColumnType("int");
 
                     b.Property<string>("SentimentScore")
@@ -136,6 +145,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActorId");
 
                     b.HasIndex("MovieId");
 
@@ -361,13 +372,13 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
 
             modelBuilder.Entity("Fall2024_Assignment3_wcmorrow2.Models.Review", b =>
                 {
-                    b.HasOne("Fall2024_Assignment3_wcmorrow2.Models.Movie", "Movie")
+                    b.HasOne("Fall2024_Assignment3_wcmorrow2.Models.Actor", null)
                         .WithMany("Reviews")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ActorId");
 
-                    b.Navigation("Movie");
+                    b.HasOne("Fall2024_Assignment3_wcmorrow2.Models.Movie", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("MovieId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -419,6 +430,11 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Fall2024_Assignment3_wcmorrow2.Models.Actor", b =>
+                {
+                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("Fall2024_Assignment3_wcmorrow2.Models.Movie", b =>

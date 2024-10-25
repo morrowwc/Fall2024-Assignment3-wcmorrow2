@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Fall2024_Assignment3_wcmorrow2.Migrations
 {
     /// <inheritdoc />
-    public partial class initDV : Migration
+    public partial class initDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,8 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                     DoB = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DoD = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IMDBlink = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    Media = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    SentimentSum = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -222,19 +223,25 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    MovieId = table.Column<int>(type: "int", nullable: false),
+                    ContentId = table.Column<int>(type: "int", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SentimentScore = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    SentimentScore = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ActorId = table.Column<int>(type: "int", nullable: true),
+                    MovieId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Review", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Review_Actor_ActorId",
+                        column: x => x.ActorId,
+                        principalTable: "Actor",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Review_Movie_MovieId",
                         column: x => x.MovieId,
                         principalTable: "Movie",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -285,6 +292,11 @@ namespace Fall2024_Assignment3_wcmorrow2.Migrations
                 name: "IX_MovieActor_MovieId",
                 table: "MovieActor",
                 column: "MovieId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Review_ActorId",
+                table: "Review",
+                column: "ActorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Review_MovieId",
