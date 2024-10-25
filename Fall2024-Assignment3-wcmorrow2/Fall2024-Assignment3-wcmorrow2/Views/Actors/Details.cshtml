@@ -1,4 +1,6 @@
-﻿@model Fall2024_Assignment3_wcmorrow2.Models.ActorDetailsViewModel
+﻿@using Newtonsoft.Json;
+
+@model Fall2024_Assignment3_wcmorrow2.Models.ActorDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -75,6 +77,71 @@
                 </div>
             </div>
         </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <div class="m-0 font-weight-bold text-primary">
+                    Total Sentiment Analysis
+                </div>
+            </div>
+            <div class="card-body">
+                @{
+                    var defaultSentiment = new VaderSharp2.SentimentAnalysisResults();
+                    string defaultSentimentJson = JsonConvert.SerializeObject(defaultSentiment);
+                    dynamic sumScore = JsonConvert.DeserializeObject(Model.Value.SentimentSum ?? defaultSentimentJson);
+                }
+                <p><strong>Compound</strong>: @sumScore.Compound.ToString()</p>
+                <p><strong>Positive</strong>: @sumScore.Positive.ToString()</p>
+                <p><strong>Neutral</strong>: @sumScore.Neutral.ToString()</p>
+                <p><strong>Negative</strong>: @sumScore.Negative.ToString()</p>
+            </div>
+        </div>
+
+        <table class="table mt-4">
+            <thead>
+                <tr>
+                    <th>Review</th>
+                    <th>Sentiment</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var review in Model.Value.Reviews)
+                {
+                    dynamic tweetData = JsonConvert.DeserializeObject(review.Content);
+                    dynamic score = JsonConvert.DeserializeObject(review.SentimentScore);
+                    <tr>
+                        @try
+                        {
+                            <td>
+                                <p><strong>@tweetData.user.name (@tweetData.user.screen_name)</strong></p>
+                                <p>@tweetData.text</p>
+                                <div><small>Created at: @tweetData.created_at</small></div>
+                                <div><small>Followers: @tweetData.user.followers_count</small></div>
+                                <div><small>Retweets: @tweetData.retweet_count | Likes: @tweetData.favorite_count</small></div>
+                            </td>
+                            <td>
+                                <div>Compound : @score.Compound.ToString()</div>
+                                <div>Positive : @score.Positive.ToString()</div>
+                                <div>Neutral : @score.Neutral.ToString()</div>
+                                <div>Negative : @score.Negative.ToString()</div>
+                            </td>
+                        }
+                        catch
+                        {
+                            <td>Invalid Review Format</td>
+                            <td>Please Delete</td>
+                        }
+                        <td>
+                            <form asp-action="DeleteReview" method="post">
+                                <input type="hidden" name="id" value="@review.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <a asp-action="GenerateReview" asp-route-id="@Model.Value?.Id" class="btn btn-primary">New Review</a>
+
     </div>
 </div>
 

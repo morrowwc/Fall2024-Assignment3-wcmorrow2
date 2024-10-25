@@ -9,9 +9,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public int MovieId { get; set; }
-        [ForeignKey("MovieId")]
-        public Movie Movie { get; set; }
+        public int ContentId { get; set; }
         [Required]
         public string Content { get; set; }
         [Required]
