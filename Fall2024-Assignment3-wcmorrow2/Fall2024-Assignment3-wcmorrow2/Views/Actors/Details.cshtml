@@ -25,9 +25,11 @@
 
                             <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.DoB)</dt>
                             <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.DoB)</dd>
-
-                            <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.DoD)</dt>
-                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.DoD)</dd>
+                                @if (Model.Value.DoD != null)
+                                {
+                                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.DoD)</dt>
+                                    <dd class="col-sm-8">@Html.DisplayFor(model => model.Value.DoD)</dd>
+                                }
 
                             <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.IMDBlink)</dt>
                             <dd class="col-sm-8"><a href="@Html.DisplayFor(model => model.Value.IMDBlink)"> @Html.DisplayFor(model => model.Value.IMDBlink)</a></dd>
