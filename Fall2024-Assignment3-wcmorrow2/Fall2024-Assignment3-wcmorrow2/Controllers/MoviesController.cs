@@ -269,7 +269,7 @@ namespace Fall2024_Assignment3_wcmorrow2.Controllers
             AzureOpenAIClient client = new(api_endpoint, api_key);
             ChatClient chat = client.GetChatClient("gpt-35-turbo");
 
-            List<string> sentimentList = ["harsh", "very literal", "easy to please", "critical of everything", "more into the books", "always referencing the Fast and the Furious franchise"];
+            List<string> sentimentList = ["harsh", "very literal", "easy to please", "into special effects", "more into the books", "always referencing the Fast and the Furious franchise"];
             List<string> genreList = ["sci-fi", "fantasy", "documentaries", "sports", "old movies", "new movies"];
             Random random = new Random();
 
