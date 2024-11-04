@@ -7,8 +7,8 @@
 
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <div class="m-0 font-weight-bold text-primary">
-            <h1 class="m-0 font-weight-bold text-primary">Details</h1>
+        <div>
+            <h1 class="m-4 font-weight-bold text-secondary">Details</h1>
         </div>
     </div>
     <div class="card-body">
@@ -16,7 +16,7 @@
             <div class="col-md-4">
                 <div class="card border-left-primary shadow h-100 py-2">
                     <div class="card-body">
-                        <h4>@Html.DisplayFor(model => model.Value.Title)</h4>
+                        <h4 class="m-0 font-weight-bold text-primary">@Html.DisplayFor(model => model.Value.Title)</h4>
                         <hr />
                         <dl class="row">
                             <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Value.Year)</dt>
